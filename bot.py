@@ -110,7 +110,7 @@ async def fetch_wallet_balance(address: str) -> int | None:
         return None
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "🐱 Welcome to MIMI618!\n\n"
         "MIMI618 is a community token on The Open Network (TON).\n"
