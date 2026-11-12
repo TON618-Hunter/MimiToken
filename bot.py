@@ -17,6 +17,7 @@ WEBSITE_URL = "https://ton618-hunter.github.io/MimiToken/"
 LOGO_URL = "https://ton618-hunter.github.io/MimiToken/logo.png"
 EXPLORER_URL = "https://tonviewer.com/EQBMSvB2k2gNqCcZNFZkGyoPO-GVQlu2pddFcCt9Al6yVOO6"
 TONAPI_JETTON_URL = f"https://tonapi.io/v2/jettons/{CONTRACT_ADDRESS}"
+TONAPI_HOLDERS_URL = f"https://tonapi.io/v2/jettons/{CONTRACT_ADDRESS}/holders?limit=10&sort_by=balance"
 
 COMMUNITY_URL = os.getenv("MIMI618_COMMUNITY_URL", "")
 ROADMAP_URL = os.getenv("MIMI618_ROADMAP_URL", WEBSITE_URL)
@@ -52,6 +53,37 @@ async def fetch_live_supply() -> str | None:
         return None
 
 
+def short_address(address: str) -> str:
+    if len(address) <= 14:
+        return address
+    return f"{address[:6]}...{address[-6:]}"
+
+
+async def fetch_holders() -> tuple[int, list[tuple[str, int]]] | None:
+    def fetch() -> tuple[int, list[tuple[str, int]]] | None:
+        request = Request(
+            TONAPI_HOLDERS_URL,
+            headers={"User-Agent": "MIMI618-Bot/1.0"},
+        )
+        with urlopen(request, timeout=8) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+
+        total = int(payload.get("total", 0))
+        holders = []
+        for item in payload.get("addresses", []):
+            owner = item.get("owner") or {}
+            address = owner.get("address") or item.get("address")
+            balance = item.get("balance")
+            if address and balance is not None:
+                holders.append((address, int(balance)))
+        return total, holders
+
+    try:
+        return await asyncio.to_thread(fetch)
+    except Exception:
+        return None
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "🐱 Welcome to MIMI618!\n\n"
@@ -60,6 +92,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "No further minting is possible.\n\n"
         "Use /token to see token details.\n"
         "Use /supply to check the live on-chain supply.\n"
+        "Use /holders to see the current holder count and top holders.\n"
         "Use /roadmap to see the project roadmap.\n"
         "Use /links to see official links."
     )
@@ -97,6 +130,42 @@ async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
 
     await update.message.reply_text(message)
+
+
+async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    data = await fetch_holders()
+
+    if not data:
+        await update.message.reply_text(
+            "👥 MIMI618 Holders\n\n"
+            "Live holder data is temporarily unavailable.\n"
+            "Please try /holders again in a moment."
+        )
+        return
+
+    total, top_holders = data
+    lines = [
+        "👥 MIMI618 Holders",
+        "",
+        f"Total holders: {total:,}",
+        "",
+        "🏆 Top 10 holders:",
+    ]
+
+    for index, (address, raw_balance) in enumerate(top_holders, start=1):
+        amount = raw_balance / (10 ** DECIMALS)
+        percentage = (amount / (TOTAL_SUPPLY_BASE_UNITS / (10 ** DECIMALS)) * 100)
+        lines.append(
+            f"{index}. {short_address(address)} · "
+            f"{amount:,.0f} MIMI618 ({percentage:.2f}%)"
+        )
+
+    lines.extend([
+        "",
+        "Source: TON blockchain via TON API.",
+        f"Explorer: {EXPLORER_URL}",
+    ])
+    await update.message.reply_text("\n".join(lines))
 
 
 async def contract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -142,6 +211,7 @@ def main() -> None:
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("token", token))
     app.add_handler(CommandHandler("supply", supply))
+    app.add_handler(CommandHandler("holders", holders))
     app.add_handler(CommandHandler("contract", contract))
     app.add_handler(CommandHandler("roadmap", roadmap))
     app.add_handler(CommandHandler("links", links))
