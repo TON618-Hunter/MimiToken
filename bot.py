@@ -18,6 +18,7 @@ LOGO_URL = "https://ton618-hunter.github.io/MimiToken/logo.png"
 EXPLORER_URL = "https://tonviewer.com/EQBMSvB2k2gNqCcZNFZkGyoPO-GVQlu2pddFcCt9Al6yVOO6"
 TONAPI_JETTON_URL = f"https://tonapi.io/v2/jettons/{CONTRACT_ADDRESS}"
 TONAPI_HOLDERS_URL = f"https://tonapi.io/v2/jettons/{CONTRACT_ADDRESS}/holders?limit=10&sort_by=balance"
+TONAPI_ACCOUNT_JETTONS_URL = "https://tonapi.io/v2/accounts/{address}/jettons"
 
 COMMUNITY_URL = os.getenv("MIMI618_COMMUNITY_URL", "")
 ROADMAP_URL = os.getenv("MIMI618_ROADMAP_URL", WEBSITE_URL)
@@ -53,6 +54,14 @@ async def fetch_live_supply() -> str | None:
         return None
 
 
+def is_valid_ton_address(address: str) -> bool:
+    if address.startswith(("EQ", "UQ")) and len(address) == 48:
+        return True
+    if address.startswith(("0:", "-1:")) and len(address) == 66:
+        return True
+    return False
+
+
 def short_address(address: str) -> str:
     if len(address) <= 14:
         return address
@@ -84,6 +93,23 @@ async def fetch_holders() -> tuple[int, list[tuple[str, int]]] | None:
         return None
 
 
+async def fetch_wallet_balance(address: str) -> int | None:
+    def fetch() -> int | None:
+        url = TONAPI_ACCOUNT_JETTONS_URL.format(address=address)
+        request = Request(url, headers={"User-Agent": "MIMI618-Bot/1.0"})
+        with urlopen(request, timeout=8) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+        for item in payload.get("balances", []):
+            jetton = item.get("jetton") or {}
+            if jetton.get("address") == CONTRACT_ADDRESS:
+                return int(item.get("balance", 0))
+        return 0
+    try:
+        return await asyncio.to_thread(fetch)
+    except Exception:
+        return None
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "🐱 Welcome to MIMI618!\n\n"
@@ -93,6 +119,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "Use /token to see token details.\n"
         "Use /supply to check the live on-chain supply.\n"
         "Use /holders to see the current holder count and top holders.\n"
+        "Use /wallet <TON address> to check a wallet's MIMI618 balance.\n"
         "Use /roadmap to see the project roadmap.\n"
         "Use /links to see official links."
     )
@@ -168,6 +195,49 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("\n".join(lines))
 
 
+async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if len(context.args) != 1:
+        await update.message.reply_text(
+            "👛 MIMI618 Wallet\n\n"
+            "Usage:\n"
+            "/wallet <TON address>\n\n"
+            "Example:\n"
+            "/wallet EQ..."
+        )
+        return
+
+    address = context.args[0].strip()
+    if not is_valid_ton_address(address):
+        await update.message.reply_text(
+            "❌ Invalid TON address format.\n\n"
+            "Send a standard EQ/UQ address or a raw TON address (0:/-1:)."
+        )
+        return
+
+    raw_balance = await fetch_wallet_balance(address)
+    if raw_balance is None:
+        await update.message.reply_text(
+            "👛 MIMI618 Wallet\n\n"
+            "Wallet data is temporarily unavailable.\n"
+            "Please try /wallet again in a moment."
+        )
+        return
+
+    amount = raw_balance / (10 ** DECIMALS)
+    percentage = amount / (TOTAL_SUPPLY_BASE_UNITS / (10 ** DECIMALS)) * 100
+    status = "✅ Wallet holds MIMI618." if amount > 0 else "ℹ️ Wallet has no MIMI618 balance."
+
+    await update.message.reply_text(
+        "👛 MIMI618 Wallet\n\n"
+        f"Address: {short_address(address)}\n"
+        f"Balance: {amount:,.9f} MIMI618\n"
+        f"Share of initial supply: {percentage:.6f}%\n\n"
+        f"{status}\n\n"
+        "Source: TON blockchain via TON API.\n"
+        f"Wallet: https://tonviewer.com/{address}"
+    )
+
+
 async def contract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         f"📜 MIMI618 Jetton contract:\n{CONTRACT_ADDRESS}\n\n"
@@ -212,6 +282,7 @@ def main() -> None:
     app.add_handler(CommandHandler("token", token))
     app.add_handler(CommandHandler("supply", supply))
     app.add_handler(CommandHandler("holders", holders))
+    app.add_handler(CommandHandler("wallet", wallet))
     app.add_handler(CommandHandler("contract", contract))
     app.add_handler(CommandHandler("roadmap", roadmap))
     app.add_handler(CommandHandler("links", links))
