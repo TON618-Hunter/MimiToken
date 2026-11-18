@@ -1,10 +1,877 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>MIMI Token</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MIMI618 - Community token on The Open Network (TON).">
+    <meta name="theme-color" content="#09070f">
+
+    <title>MIMI618 | Community Token on TON</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at 50% 0%, #281044 0%, #10091a 30%, #07060a 65%);
+            color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(1100px, 92%);
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7, 6, 10, 0.82);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(180, 100, 255, 0.12);
+        }
+
+        .nav {
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .brand img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: #cfc7d9;
+        }
+
+        .nav-links a:hover {
+            color: #d99cff;
+        }
+
+        /* HERO */
+
+        .hero {
+            min-height: 780px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            left: 50%;
+            top: 100px;
+            transform: translateX(-50%);
+            background: rgba(156, 63, 255, 0.18);
+            filter: blur(100px);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .hero-logo {
+            width: 210px;
+            height: 210px;
+            border-radius: 50%;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 0 35px rgba(170, 80, 255, 0.45));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(52px, 9vw, 100px);
+            line-height: 1;
+            letter-spacing: -4px;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(90deg, #ffffff, #d38cff, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin: 0 auto 32px;
+            color: #bdb4c8;
+            font-size: 20px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-weight: 700;
+            transition: 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, #9b45ff, #6724c4);
+            box-shadow: 0 10px 35px rgba(131, 45, 220, 0.25);
+        }
+
+        .button-secondary {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.12);
+        }
+
+        .hero-stats {
+            margin: 55px auto 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hero-stat {
+            padding: 10px 18px;
+            border: 1px solid rgba(190, 110, 255, 0.18);
+            background: rgba(255,255,255,0.035);
+            border-radius: 999px;
+            color: #d6cede;
+            font-size: 13px;
+        }
+
+        /* SECTIONS */
+
+        section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title .eyebrow {
+            color: #b875ff;
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .section-title h2 {
+            font-size: clamp(34px, 6vw, 56px);
+            line-height: 1.1;
+            margin-bottom: 14px;
+        }
+
+        .section-title p {
+            max-width: 650px;
+            margin: auto;
+            color: #9991a4;
+        }
+
+        /* TOKEN */
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .token-card {
+            padding: 28px;
+            background: rgba(255,255,255,0.045);
+            border: 1px solid rgba(190, 110, 255, 0.14);
+            border-radius: 20px;
+        }
+
+        .token-card small {
+            color: #8e8796;
+            display: block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .token-card strong {
+            font-size: 26px;
+        }
+
+        .contract {
+            margin-top: 16px;
+            padding: 28px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(144,65,255,0.12), rgba(255,255,255,0.035));
+            border: 1px solid rgba(190, 110, 255, 0.18);
+        }
+
+        .contract-label {
+            color: #9e96a9;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .contract-address {
+            font-family: monospace;
+            word-break: break-all;
+            color: #e6d9ee;
+            margin-bottom: 20px;
+        }
+
+        .contract-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* FEATURES */
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .feature {
+            padding: 28px;
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+        }
+
+        .feature-icon {
+            font-size: 30px;
+            margin-bottom: 18px;
+        }
+
+        .feature h3 {
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            color: #9d95a6;
+            font-size: 14px;
+        }
+
+        /* BOT */
+
+        .bot-box {
+            text-align: center;
+            padding: 60px 30px;
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(161, 65, 255, 0.22), transparent 55%),
+                rgba(255,255,255,0.035);
+            border: 1px solid rgba(190, 110, 255, 0.18);
+        }
+
+        .bot-icon {
+            font-size: 52px;
+            margin-bottom: 20px;
+        }
+
+        .commands {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 28px 0;
+        }
+
+        .command {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            color: #d49aff;
+        }
+
+        /* ROADMAP */
+
+        .roadmap {
+            display: grid;
+            gap: 14px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .roadmap-item {
+            display: flex;
+            gap: 20px;
+            padding: 24px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .roadmap-number {
+            min-width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(154, 69, 255, 0.18);
+            color: #ce8bff;
+            font-weight: 800;
+        }
+
+        .roadmap-item h3 {
+            margin-bottom: 5px;
+        }
+
+        .roadmap-item p {
+            color: #9991a4;
+            font-size: 14px;
+        }
+
+        .status {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b875ff;
+        }
+
+        /* COMMUNITY */
+
+        .community-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            padding: 50px 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            color: #77717f;
+            text-align: center;
+        }
+
+        footer strong {
+            color: #d9cce0;
+        }
+
+        .footer-links {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            color: #d49aff;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                min-height: 720px;
+            }
+
+            .hero-logo {
+                width: 165px;
+                height: 165px;
+            }
+
+            .hero p {
+                font-size: 17px;
+            }
+
+            .token-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 520px) {
+            section {
+                padding: 75px 0;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                letter-spacing: -2px;
+            }
+
+            .button {
+                width: 100%;
+            }
+
+            .hero-buttons {
+                width: 100%;
+            }
+
+            .hero-stat {
+                width: 100%;
+            }
+
+            .roadmap-item {
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
-<body style="background:#000;margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;">
-  <img src="logo.png" alt="MIMI Token" style="max-width:90%;height:auto;">
+
+<body>
+
+<header>
+    <div class="container nav">
+        <a href="#" class="brand">
+            <img src="logo.png" alt="MIMI618 logo">
+            <span>MIMI618</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="#token">Token</a>
+            <a href="#bot">Bot</a>
+            <a href="#roadmap">Roadmap</a>
+            <a href="#community">Community</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+    <!-- HERO -->
+
+    <section class="hero">
+        <div class="container hero-content">
+
+            <img class="hero-logo" src="logo.png" alt="MIMI618">
+
+            <h1><span>MIMI618</span></h1>
+
+            <p>
+                A community token built on
+                <strong>The Open Network.</strong>
+            </p>
+
+            <div class="hero-buttons">
+                <a class="button button-primary"
+                   href="https://t.me/MIMI618Official"
+                   target="_blank">
+                    💬 Official Telegram
+                </a>
+
+                <a class="button button-secondary"
+                   href="https://tonviewer.com/EQBMSvB2k2gNqCcZNFZkGyoPO-GVQlu2pddFcCt9Al6yVOO6"
+                   target="_blank">
+                    🔗 View Contract
+                </a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="hero-stat">1,000,000,000 MIMI618</div>
+                <div class="hero-stat">FIXED SUPPLY</div>
+                <div class="hero-stat">TON</div>
+                <div class="hero-stat">NO FURTHER MINTING</div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- TOKEN -->
+
+    <section id="token">
+        <div class="container">
+
+            <div class="section-title">
+                <div class="eyebrow">The Token</div>
+                <h2>MIMI618</h2>
+                <p>
+                    Simple tokenomics. Fixed initial supply.
+                    Built on TON.
+                </p>
+            </div>
+
+            <div class="token-grid">
+
+                <div class="token-card">
+                    <small>Network</small>
+                    <strong>TON</strong>
+                </div>
+
+                <div class="token-card">
+                    <small>Total Supply</small>
+                    <strong>1,000,000,000</strong>
+                </div>
+
+                <div class="token-card">
+                    <small>Decimals</small>
+                    <strong>9</strong>
+                </div>
+
+                <div class="token-card">
+                    <small>Further Minting</small>
+                    <strong>Disabled</strong>
+                </div>
+
+                <div class="token-card">
+                    <small>Tax</small>
+                    <strong>0%</strong>
+                </div>
+
+                <div class="token-card">
+                    <small>Token</small>
+                    <strong>MIMI618</strong>
+                </div>
+
+            </div>
+
+            <div class="contract">
+                <div class="contract-label">MIMI618 CONTRACT</div>
+
+                <div class="contract-address" id="contractAddress">
+                    EQBMSvB2k2gNqCcZNFZkGyoPO-GVQlu2pddFcCt9Al6yVOO6
+                </div>
+
+                <div class="contract-buttons">
+                    <button class="button button-primary" onclick="copyContract()">
+                        📋 Copy Address
+                    </button>
+
+                    <a class="button button-secondary"
+                       href="https://tonviewer.com/EQBMSvB2k2gNqCcZNFZkGyoPO-GVQlu2pddFcCt9Al6yVOO6"
+                       target="_blank">
+                        🔎 TON Viewer
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+
+    <section>
+        <div class="container">
+
+            <div class="section-title">
+                <div class="eyebrow">Why MIMI618</div>
+                <h2>Built for the community.</h2>
+                <p>
+                    MIMI618 focuses on a simple token,
+                    an active community and useful tools.
+                </p>
+            </div>
+
+            <div class="features">
+
+                <div class="feature">
+                    <div class="feature-icon">🐱</div>
+                    <h3>Community</h3>
+                    <p>
+                        MIMI618 is built around its community
+                        and the TON ecosystem.
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Fixed Supply</h3>
+                    <p>
+                        The initial supply is fixed.
+                        No further minting is possible.
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">🌐</div>
+                    <h3>TON</h3>
+                    <p>
+                        MIMI618 lives on The Open Network,
+                        a fast blockchain ecosystem.
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Telegram Bot</h3>
+                    <p>
+                        Check token information and
+                        on-chain data directly from Telegram.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- BOT -->
+
+    <section id="bot">
+        <div class="container">
+
+            <div class="bot-box">
+
+                <div class="bot-icon">🤖</div>
+
+                <div class="section-title">
+                    <div class="eyebrow">MIMI618 Tools</div>
+                    <h2>Meet the MIMI618 Bot</h2>
+                    <p>
+                        Check MIMI618 directly from Telegram.
+                    </p>
+                </div>
+
+                <div class="commands">
+                    <span class="command">/supply</span>
+                    <span class="command">/holders</span>
+                    <span class="command">/wallet</span>
+                    <span class="command">/token</span>
+                </div>
+
+                <a class="button button-primary"
+                   href="https://t.me/MIMI618HunterBot"
+                   target="_blank">
+                    🤖 Open MIMI618 Bot
+                </a>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ROADMAP -->
+
+    <section id="roadmap">
+        <div class="container">
+
+            <div class="section-title">
+                <div class="eyebrow">Roadmap</div>
+                <h2>The journey starts here.</h2>
+                <p>
+                    Building MIMI618 step by step.
+                </p>
+            </div>
+
+            <div class="roadmap">
+
+                <div class="roadmap-item">
+                    <div class="roadmap-number">01</div>
+
+                    <div>
+                        <h3>Foundation</h3>
+                        <p>
+                            Token, website, Telegram,
+                            community and official bot.
+                        </p>
+                        <span class="status">Completed</span>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-number">02</div>
+
+                    <div>
+                        <h3>Launch</h3>
+                        <p>
+                            Liquidity, DEX launch and
+                            growing the MIMI618 community.
+                        </p>
+                        <span class="status">Next</span>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-number">03</div>
+
+                    <div>
+                        <h3>Growth</h3>
+                        <p>
+                            More tools, community activity
+                            and ecosystem development.
+                        </p>
+                        <span class="status">Coming</span>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-number">04</div>
+
+                    <div>
+                        <h3>Ecosystem</h3>
+                        <p>
+                            Future MIMI618 integrations
+                            and additional functionality.
+                        </p>
+                        <span class="status">Future</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- COMMUNITY -->
+
+    <section id="community">
+        <div class="container">
+
+            <div class="section-title">
+                <div class="eyebrow">Join MIMI618</div>
+                <h2>Become part of the community.</h2>
+                <p>
+                    Follow the official channels and
+                    stay up to date.
+                </p>
+            </div>
+
+            <div class="community-buttons">
+
+                <a class="button button-primary"
+                   href="https://t.me/MIMI618Official"
+                   target="_blank">
+                    📢 Official Telegram
+                </a>
+
+                <a class="button button-secondary"
+                   href="https://t.me/MIMI618HunterBot"
+                   target="_blank">
+                    🤖 MIMI618 Bot
+                </a>
+
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer>
+
+    <div class="container">
+
+        <strong>🐱 MIMI618</strong>
+
+        <p>
+            Community token on The Open Network.
+        </p>
+
+        <div class="footer-links">
+
+            <a href="https://t.me/MIMI618Official" target="_blank">
+                Telegram
+            </a>
+
+            <a href="https://t.me/MIMI618HunterBot" target="_blank">
+                Bot
+            </a>
+
+            <a href="https://tonviewer.com/EQBMSvB2k2gNqCcZNFZkGyoPO-GVQlu2pddFcCt9Al6yVOO6"
+               target="_blank">
+                Contract
+            </a>
+
+        </div>
+
+        <p style="margin-top:25px;font-size:12px;">
+            © 2026 MIMI618
+        </p>
+
+    </div>
+
+</footer>
+
+<script>
+    function copyContract() {
+        const address = document.getElementById("contractAddress").innerText;
+
+        navigator.clipboard.writeText(address).then(() => {
+            const button = event.target;
+            const originalText = button.innerText;
+
+            button.innerText = "✅ Copied!";
+
+            setTimeout(() => {
+                button.innerText = originalText;
+            }, 1800);
+        });
+    }
+</script>
+
 </body>
 </html>
